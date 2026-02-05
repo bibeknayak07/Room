@@ -1,9 +1,3 @@
-
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const cors = require('cors'); 
-// const bcrypt = require('bcryptjs'); 
-// require('dotenv').config();
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -11,20 +5,29 @@ import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
 const app = express();
+
+// --- 1. MIDDLEWARE ---
 app.use(express.json());
-app.use(cors({ origin: 'https://room-3t00.onrender.com' }));
+
+// FIXED CORS: Combined everything into one clean block
 app.use(cors({
-    origin: 'https://roomshift.netlify.app',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
+    origin: ['https://roomshift.netlify.app', 'http://127.0.0.1:5500', 'http://localhost:5500'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
-// MongoDB Connection
+
+// Handle Pre-flight requests
+app.options('*', cors());
+
+// --- 2. MONGODB CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch(err => console.error("Could not connect to MongoDB", err));
 
-// 1. User Schema
+// --- 3. SCHEMAS ---
 const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -32,7 +35,6 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// 2. Booking Schema
 const bookingSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     userName: String,
@@ -48,16 +50,15 @@ const bookingSchema = new mongoose.Schema({
 });
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// --- 3. NEW: The Register Route ---
+// --- 4. ROUTES ---
+
+// Register
 app.post('/api/register', async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Check if user exists
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ msg: "User already exists" });
 
-        // Hash Password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -73,7 +74,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// --- 4. The Login Route ---
+// Login
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -92,50 +93,39 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// --- 5. The Booking Route (Cleaned up) ---
+// Book a Move
 app.post('/api/book-move', async (req, res) => {
     try {
         const { userId, userName, userPhone, userEmail, houseSize, moveDate, price, pickupAddress, destinationAddress } = req.body;
         
-        // Validation
         if(!pickupAddress || !destinationAddress) {
             return res.status(400).json({ msg: "Pickup and Destination addresses are required." });
         }
 
         const newBooking = new Booking({
-            userId, 
-            userName,
-            userPhone,
-            userEmail, 
-            houseSize, 
-            moveDate, 
-            price,
-            pickupAddress,
-            destinationAddress
+            userId, userName, userPhone, userEmail, 
+            houseSize, moveDate, price, pickupAddress, destinationAddress
         });
 
         const savedBooking = await newBooking.save();
-        console.log("Saved to DB:", savedBooking);
-
         res.status(201).json({ msg: "Booking confirmed successfully!" });
     } catch (err) {
-        console.error("Save Error:", err.message);
         res.status(500).json({ error: err.message });
     }
 });
 
-// --- 6. Get bookings for a specific user ---
+// History
 app.get('/api/my-bookings/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
         const bookings = await Booking.find({ userId: userId }).sort({ createdAt: -1 });
         res.json(bookings);
     } catch (err) {
-        console.error("Fetch Error:", err);
         res.status(500).json({ error: "Could not fetch history" });
     }
 });
 
+// --- 5. START SERVER ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);

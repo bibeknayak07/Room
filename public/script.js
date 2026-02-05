@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- 0. CONFIGURATION ---
-    // REPLACE THIS URL with your actual Render Web Service URL
     const API_URL = "https://room-3t00.onrender.com";
 
     // --- 1. SCROLL ANIMATIONS ---
@@ -49,14 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const historyContainer = document.getElementById('history');
         if (!historyContainer) return;
 
+        // Visual feedback that history is loading
+        historyContainer.innerHTML = '<p style="text-align:center; color:#8b949e;">Loading history...</p>';
+
         try {
             const response = await fetch(`${API_URL}/api/my-bookings/${userId}`);
             const bookings = await response.json();
 
             if (bookings.length > 0) {
-                // Generate HTML for each booking
                 historyContainer.innerHTML = bookings.map(b => `
-                    <div class="booking-card" style="...">
+                    <div class="booking-card">
                       <div style="font-weight: bold; color: #58a6ff;">${b.houseSize}</div>
                       <div style="font-size: 0.8rem; color: #8b949e; margin-top: 5px;">
                           <i class="fa-solid fa-location-dot"></i> From: ${b.pickupAddress}<br>
@@ -74,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error("Error loading history:", err);
+            historyContainer.innerHTML = '<p style="text-align:center; color:#f85149;">Error loading data.</p>';
         }
     };
 
@@ -84,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user && navAuthSection) {
             navAuthSection.innerHTML = `
                 <div class="user-avatar-nav" id="profileTrigger" title="View Account">
-                <i class="fa-solid fa-user"></i>
-            </div>`;
+                    <i class="fa-solid fa-user"></i>
+                </div>`;
 
             if(document.getElementById('dashUserEmail')) {
                 document.getElementById('dashUserEmail').innerText = user.email;
@@ -96,8 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('profileTrigger').onclick = () => {
                 dashboardOverlay.style.display = 'flex';
-                openTab(null, 'history'); // Reset to history tab
-                loadMoveHistory(user.id); // Fetch fresh data from DB
+                openTab(null, 'history'); 
+                loadMoveHistory(user.id); 
             };
         }
     };
@@ -105,75 +107,78 @@ document.addEventListener('DOMContentLoaded', () => {
     checkLoginStatus();
 
     // --- 6. BOOKING FORM SUBMISSION ---
-if (quoteForm) {
-    quoteForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const user = JSON.parse(localStorage.getItem('user'));
+    if (quoteForm) {
+        quoteForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('user'));
 
-        if (!user) {
-            alert("Please login first.");
-            authOverlay.style.display = 'flex';
-            return;
-        }
-        
-        const submitBtnBooking = quoteForm.querySelector('button[type="submit"]');
-        submitBtnBooking.innerText = "Processing...";
-        submitBtnBooking.disabled = true;
-
-        try {
-            // Get values safely
-            const hSize = document.getElementById('houseSize').selectedOptions[0].text;
-            const mDate = document.querySelector('input[type="date"]').value;
-            const pPrice = document.getElementById('priceValue').innerText;
-            const pAddr = document.getElementById('pickupAddress').value;      // Check this ID exists!
-            const dAddr = document.getElementById('destinationAddress').value; // Check this ID exists!
-
-            const bookingData = {
-                userId: user.id,
-                userEmail: user.email,
-                houseSize: hSize,
-                moveDate: mDate,
-                price: pPrice,
-                pickupAddress: pAddr,
-                destinationAddress: dAddr
-            };
+            if (!user) {
+                alert("Please login first.");
+                authOverlay.style.display = 'flex';
+                return;
+            }
             
-            // UPDATED: Used API_URL variable instead of localhost
+            const submitBtnBooking = quoteForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtnBooking.innerText;
+            submitBtnBooking.innerText = "Connecting to server...";
+            submitBtnBooking.disabled = true;
+
+            try {
+                const hSize = document.getElementById('houseSize').selectedOptions[0].text;
+                const mDate = document.querySelector('input[type="date"]').value;
+                const pPrice = document.getElementById('priceValue').innerText;
+                const pAddr = document.getElementById('pickupAddress').value;
+                const dAddr = document.getElementById('destinationAddress').value;
+
+                const bookingData = {
+                    userId: user.id,
+                    userEmail: user.email,
+                    houseSize: hSize,
+                    moveDate: mDate,
+                    price: pPrice,
+                    pickupAddress: pAddr,
+                    destinationAddress: dAddr
+                };
+                
                 const response = await fetch(`${API_URL}/api/book-move`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(bookingData)
                 });
 
-            if (response.ok) {
-                alert("🎉 Booking saved!");
-                const adminPhone = "9779818032581"; 
-                const message = `*New Booking*%0A*From:* ${pAddr}%0A*To:* ${dAddr}%0A*Size:* ${hSize}`;
-                window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
-                location.reload(); 
-            } else {
-                const errorData = await response.json();
-                alert("Server Error: " + (errorData.error || "Unknown error"));
-                submitBtnBooking.innerText = "Confirm Booking";
+                if (response.ok) {
+                    alert("🎉 Booking saved!");
+                    const adminPhone = "9779818032581"; 
+                    const message = `*New Booking*%0A*From:* ${pAddr}%0A*To:* ${dAddr}%0A*Size:* ${hSize}`;
+                    window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
+                    location.reload(); 
+                } else {
+                    const errorData = await response.json();
+                    alert("Server Error: " + (errorData.error || "Unknown error"));
+                    submitBtnBooking.innerText = originalBtnText;
+                    submitBtnBooking.disabled = false;
+                }
+            } catch (err) {
+                console.error("Frontend Error:", err);
+                alert("Server is waking up. Please try again in 30 seconds.");
+                submitBtnBooking.innerText = originalBtnText;
                 submitBtnBooking.disabled = false;
             }
-        } catch (err) {
-            console.error("Frontend Error:", err);
-            alert("Error: Check if all fields are filled correctly.");
-            submitBtnBooking.innerText = "Confirm Booking";
-            submitBtnBooking.disabled = false;
-        }
-    };
-}
+        };
+    }
 
     // --- 7. AUTH FORM (LOGIN/SIGNUP) ---
     if (authForm) {
         authForm.onsubmit = async (e) => {
             e.preventDefault();
-            submitBtn.innerText = "Processing...";
+            const originalBtnText = isLoginMode ? "Continue" : "Sign Up";
+            submitBtn.innerText = "Please wait (Server waking up)...";
+            submitBtn.disabled = true;
+
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
             const endpoint = isLoginMode ? `${API_URL}/api/login` : `${API_URL}/api/register`;
+
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -187,15 +192,19 @@ if (quoteForm) {
                     location.reload(); 
                 } else {
                     alert(data.msg || "Error occurred");
-                    submitBtn.innerText = isLoginMode ? "Continue" : "Sign Up";
+                    submitBtn.innerText = originalBtnText;
+                    submitBtn.disabled = false;
                 }
             } catch(err) {
-                alert("Backend offline!");
-                submitBtn.innerText = isLoginMode ? "Continue" : "Sign Up";
+                console.error("Auth Error:", err);
+                alert("Server connection failed. It may be sleeping. Please wait a moment and try again.");
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
             }
         };
     }
 
+    // --- 8. UI HANDLERS (TOGGLE, TABS, CLICKS) ---
     if (toggleLink) {
         toggleLink.onclick = (e) => {
             e.preventDefault();
@@ -206,7 +215,6 @@ if (quoteForm) {
         };
     }
 
-    // --- 8. TAB SWITCHING LOGIC ---
     window.openTab = function(evt, tabName) {
         let i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("tab-content");
@@ -221,12 +229,11 @@ if (quoteForm) {
         if (evt) {
             evt.currentTarget.classList.add("active");
         } else {
-            // Highlight history tab by default
-            document.querySelector('.tab-link').classList.add("active");
+            const defaultTab = document.querySelector('.tab-link');
+            if (defaultTab) defaultTab.classList.add("active");
         }
     };
 
-    // --- 9. GLOBAL CLICK HANDLER (CLOSE & LOGOUT) ---
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('close-btn') || 
             e.target.id === 'closeAuthBtn' || 
@@ -236,13 +243,12 @@ if (quoteForm) {
             dashboardOverlay.style.display = 'none';
         }
         if (e.target.id === 'openAuthBtn' || e.target.closest('#openAuthBtn')) {
-        authOverlay.style.display = 'flex';
-    }
+            authOverlay.style.display = 'flex';
+        }
         if (e.target === authOverlay || e.target === dashboardOverlay) {
             authOverlay.style.display = 'none';
             dashboardOverlay.style.display = 'none';
         }
-
         if (e.target.id === 'logoutBtn' || e.target.closest('#logoutBtn')) {
             localStorage.removeItem('user');
             location.reload();
