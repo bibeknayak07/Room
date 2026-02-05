@@ -1,3 +1,10 @@
+import express from "express";
+const router = express.Router();
+
+router.post("/login", (req, res) => {
+  res.json({ success: true });
+});
+
 const signupForm = document.getElementById('signupForm'); // Ensure your <form> has this ID
 
 signupForm.addEventListener('submit', async (e) => {
@@ -27,3 +34,4 @@ signupForm.addEventListener('submit', async (e) => {
     }
 });
 
+export default router;
