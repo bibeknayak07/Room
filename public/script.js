@@ -143,7 +143,7 @@ if (quoteForm) {
 
             if (response.ok) {
                 alert("🎉 Booking saved!");
-                const adminPhone = "9779705600529"; 
+                const adminPhone = "9779818032581"; 
                 const message = `*New Booking*%0A*From:* ${pAddr}%0A*To:* ${dAddr}%0A*Size:* ${hSize}`;
                 window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
                 location.reload(); 
@@ -172,7 +172,7 @@ if (quoteForm) {
             const endpoint = isLoginMode ? '/api/login' : '/api/register';
             
             try {
-                const response = await fetch(`http://localhost:5000${endpoint}`, {
+                const response = await fetch('/.netlify/functions/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
