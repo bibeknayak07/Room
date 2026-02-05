@@ -14,7 +14,11 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: 'https://room-3t00.onrender.com' }));
-app.use(cors({ origin: 'https://roomshift.netlify.app'}));
+app.use(cors({
+    origin: 'https://roomshift.netlify.app',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB Atlas"))
