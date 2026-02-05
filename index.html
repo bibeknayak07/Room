@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoveSmart – Premium Room Shifting Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">Move<span class="gradient-text">Smart</span></div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#services">Services</a>
+    <a href="#process">How it Works</a>
+    <div id="navAuthSection">
+    <a href="javascript:void(0)" class="nav-btn" id="openAuthBtn">Sign In</a>
+</div>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-content" data-animate>
+    <!-- <span class="badge">✨ #1 Rated Movers in 2026</span> -->
+    <h2>Moving Made <br><span class="gradient-text">Simple & Stress-Free</span></h2>
+    <p>Premium packing, verified movers, and real-time tracking. We treat your belongings like our own.</p>
+    <div class="hero-btns">
+      <a href="#booking" class="btn-primary">Get Instant Quote</a>
+      <!-- <a href="#services" class="btn-secondary">View Services</a> -->
+    </div>
+  </div>
+  <div class="hero-image" data-animate>
+    <img src="assets/Image2.png" alt="Moving Truck">
+  </div>
+</section>
+
+<section class="section" id="services">
+  <div class="section-header" data-animate>
+    <h3><span class="gradient-text">Why Choose MoveSmart?</span></h3>
+    <p>Professional solutions for every moving need.</p>
+  </div>
+  <div class="services">
+    <div class="card" data-animate>
+      <i class="fa-solid fa-shield-check icon"></i>
+      <h4>Verified Team</h4>
+      <p>Background-checked professionals you can trust in your home.</p>
+    </div>
+    <div class="card" data-animate>
+      <i class="fa-solid fa-box-open icon"></i>
+      <h4>Premium Packing</h4>
+      <p>Eco-friendly, multi-layer protection for your fragile items.</p>
+    </div>
+    <div class="card" data-animate>
+      <i class="fa-solid fa-location-dot icon"></i>
+      <h4>Live Tracking</h4>
+      <p>Real-time GPS tracking for every vehicle in transit.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section alt-bg" id="process">
+    <div class="section-header" data-animate>
+        <h3><span class="gradient-text">How It Works</span></h3>
+    </div>
+    <div class="process-steps">
+        <div class="step" data-animate>
+            <div class="step-num">1</div>
+            <h4>Book Online</h4>
+            <p>Enter details & get price.</p>
+        </div>
+        <div class="step" data-animate>
+            <div class="step-num">2</div>
+            <h4>We Pack</h4>
+            <p>Safe & secure packing.</p>
+        </div>
+        <div class="step" data-animate>
+            <div class="step-num">3</div>
+            <h4>We Move</h4>
+            <p>Smooth transit to destination.</p>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="section" id="booking">
+  <div class="booking-wrapper" data-animate>
+    <h3><span class="gradient-text">Estimate and Book</span></h3>
+    <form id="quoteForm">
+      <div class="input-group">
+        <input type="text" placeholder="Full Name" required>
+        <input type="tel" placeholder="Phone Number" required>
+      </div>
+      <input type="text" id="pickupAddress" placeholder="Pickup Address" required>
+      <input type="text" id="destinationAddress" placeholder="Destination Address" required>
+      
+      <div class="input-group">
+          <input type="date" required>
+          <select id="houseSize" required>
+            <option value="">House Size</option>
+            <option value="1500">Single Room</option>
+            <option value="3000">1 BHK</option>
+            <option value="5500">2 BHK</option>
+            <option value="8000">3 BHK+</option>
+            <option value="15000">Shop and Godam</option>
+          </select>
+      </div>
+
+      <div id="priceDisplay" class="price-box" style="display:none">
+        <span>Estimated Cost:</span>
+        <h4 id="priceValue">Rs 0</h4>
+      </div>
+
+      <button type="submit" class="btn-primary">Confirm Booking</button>
+    </form>
+    <p id="successMsg" class="success-alert">
+      ✅ Request Sent! We'll call you as soon as possible.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <p>© 2026 MoveSmart. All rights reserved.</p>
+    <div class="footer-links">
+        <a href="#"><i class="fa-brands fa-facebook"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+    </div>
+  </div>
+</footer>
+
+<div id="authOverlay" class="auth-overlay">
+  <div class="auth-modal">
+    <button class="close-btn" id="closeAuthBtn">&times;</button>
+    
+    <div class="auth-header">
+      <div class="logo">Move<span>Smart</span></div>
+      <h2>Log in or sign up</h2>
+      <p>Join thousands of happy movers today.</p>
+    </div>
+
+    <div class="auth-body">
+      <button class="social-btn google">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" alt="G">
+        Continue with Google
+      </button>
+      
+      <div class="divider"><span>OR</span></div>
+
+      <form id="combinedAuthForm">
+        <input type="email" id="authEmail" placeholder="Email address" required>
+        <div class="password-field">
+          <input type="password" id="authPassword" placeholder="Password" required>
+        </div>
+        <button type="submit" class="continue-btn" id="authSubmitBtn">Continue</button>
+      </form>
+    </div>
+
+    <p class="auth-footer">
+      Don't have an account? <a href="#" id="toggleAuthMode">Sign Up</a>
+    </p>
+  </div>
+</div>
+<div id="dashboardOverlay" class="auth-overlay">
+  <div class="dashboard-card">
+    <button class="close-btn" id="closeDashBtn" onclick="closeAllModals()">&times;</button>
+    
+    <div class="dash-header">
+      <div class="user-avatar">
+        <i class="fa-solid fa-user-tie"></i>
+      </div>
+      <h3 id="dashUserEmail">user@example.com</h3>
+      <span class="badge">Premium Member</span>
+    </div>
+
+    <div class="dash-content">
+      <div class="tab-menu">
+        <button class="tab-link active" onclick="openTab(event, 'history')">Move History</button>
+        <button class="tab-link" onclick="openTab(event, 'profile')">Profile Details</button>
+      </div>
+
+      <div id="history" class="tab-content" style="display:block;">
+        <div class="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <p>No past moves found. Ready to shift?</p>
+            <a href="#booking" class="btn-secondary" style="font-size: 0.8rem; padding: 8px 15px;">Book Now</a>
+        </div>
+      </div>
+
+      <div id="profile" class="tab-content">
+        <div class="profile-info">
+            <div class="info-item"><span>Email:</span> <p id="infoEmail">-</p></div>
+            <div class="info-item"><span>Status:</span> <p>Verified User</p></div>
+            <div class="info-item"><span>Member Since:</span> <p>Jan 2026</p></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="logoutBtn" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
