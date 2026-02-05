@@ -2,8 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- 0. CONFIGURATION ---
     // REPLACE THIS URL with your actual Render Web Service URL
-    const API_URL = "https://room-3t00.onrender.com";
-
+    const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' 
+    ? "http://localhost:5000" 
+    : "https://room-3t00.onrender.com";
+    
     // --- 1. SCROLL ANIMATIONS ---
     const animatedItems = document.querySelectorAll('[data-animate]');
     const observer = new IntersectionObserver(entries => {
