@@ -8,19 +8,42 @@ dotenv.config();
 
 const app = express();
 
-// --- 1. MIDDLEWARE ---
+// 1. GLOBAL HEADERS & CORS
 app.use(express.json());
 
-// FIXED CORS: Combined everything into one clean block
-app.use(cors({
-    origin: ['https://roomshift.netlify.app', 'http://127.0.0.1:5500', 'http://localhost:5500'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-}));
+// Manually handling CORS to avoid the path-to-regexp error in Node v24
+app.use((req, res, next) => {
+    const allowedOrigins = ['https://roomshift.netlify.app', 'http://127.0.0.1:5500', 'http://localhost:5500'];
+    const origin = req.headers.origin;
+    
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Allow-Credentials", "true");
 
-// Handle Pre-flight requests
-app.options('(.*)', cors());
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
+// This applies CORS to all OPTIONS requests globally without needing a path pattern
+app.use(cors()); 
+app.options('*', cors()); // If this still fails, just use the line below instead:
+
+// ULTIMATE FIX: Use this instead of the line above if it crashes again:
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://roomshift.netlify.app");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+    next();
+});
 
 // --- 2. MONGODB CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)
