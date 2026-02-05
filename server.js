@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: 'https://room-3t00.onrender.com' }));
-app.use(cors({ origin: 'https://roomshift.netlify.app'}));
+app.use(cors({ origin: 'https://roomshift.netlify.app/'}));
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Connected to MongoDB Atlas"))
@@ -133,4 +133,6 @@ app.get('/api/my-bookings/:userId', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
+});
