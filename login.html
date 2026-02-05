@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login – MoveSmart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+      <h2>Welcome Back</h2>
+      <p>Sign in to manage your moves</p>
+
+      <button class="btn-google">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" alt="Google"> 
+        Continue with Google
+      </button>
+
+      <div class="divider"><span>OR</span></div>
+
+      <form id="loginForm">
+        <div class="input-box">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" placeholder="Email Address" required>
+        </div>
+        <div class="input-box">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn-primary">Sign In</button>
+      </form>
+
+      <p class="auth-footer">Don't have an account? <a href="signup.html">Create one</a></p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
