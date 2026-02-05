@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // --- 0. CONFIGURATION ---
+    // REPLACE THIS URL with your actual Render Web Service URL
+    const API_URL = "https://room-3t00.onrender.com";
+
     // --- 1. SCROLL ANIMATIONS ---
     const animatedItems = document.querySelectorAll('[data-animate]');
     const observer = new IntersectionObserver(entries => {
@@ -46,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!historyContainer) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/api/my-bookings/${userId}`);
+            const response = await fetch(`${API_URL}/api/my-bookings/${userId}`);
             const bookings = await response.json();
 
             if (bookings.length > 0) {
@@ -134,12 +138,12 @@ if (quoteForm) {
                 destinationAddress: dAddr
             };
             
-            console.log("Sending to server:", bookingData);
-            const response = await fetch('https://room-3t00.onrender.com/api/book-move', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData)
-            });
+            // UPDATED: Used API_URL variable instead of localhost
+                const response = await fetch(`${API_URL}/api/book-move`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bookingData)
+                });
 
             if (response.ok) {
                 alert("🎉 Booking saved!");
@@ -169,10 +173,9 @@ if (quoteForm) {
             submitBtn.innerText = "Processing...";
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
-            const endpoint = isLoginMode ? '/api/login' : '/api/register';
-            
+            const endpoint = isLoginMode ? `${API_URL}/api/login` : `${API_URL}/api/register`;
             try {
-                const response = await fetch('/.netlify/functions/login', {
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })

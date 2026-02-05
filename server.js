@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: 'https://your-netlify-app-name.netlify.app' }));
+app.use(cors({ origin: 'https://room-3t00.onrender.com' }));
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
