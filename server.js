@@ -20,7 +20,7 @@ app.use(cors({
 }));
 
 // Handle Pre-flight requests
-app.options('*', cors());
+app.options('(.*)', cors());
 
 // --- 2. MONGODB CONNECTION ---
 mongoose.connect(process.env.MONGO_URI)

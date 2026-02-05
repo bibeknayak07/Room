@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "script.js",
   "scripts": {
-    "dev": "vercel dev"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
