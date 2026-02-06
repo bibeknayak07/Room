@@ -147,11 +147,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
+                    const responseData = await response.json();
                     alert("🎉 Booking saved!");
-                    const adminPhone = "9779818032581"; 
-                    const message = `*New Booking*%0A*From:* ${pAddr}%0A*To:* ${dAddr}%0A*Size:* ${hSize}`;
-                    window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
-                    location.reload(); 
+                    
+                    // Show payment options
+                    setTimeout(() => {
+                        if (confirm('Would you like to pay now?')) {
+                            // Get the latest booking to get its ID
+                            const bookingResponse = await fetch(`${API_URL}/api/my-bookings/${user.id}`);
+                            const bookings = await bookingResponse.json();
+                            if (bookings.length > 0) {
+                                const latestBooking = bookings[0];
+                                showPaymentModal(latestBooking._id, parseInt(pPrice), user.email.split('@')[0], user.email);
+                            }
+                        } else {
+                            const adminPhone = "9779818032581"; 
+                            const message = `*New Booking*%0A*From:* ${pAddr}%0A*To:* ${dAddr}%0A*Size:* ${hSize}`;
+                            window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
+                            location.reload();
+                        }
+                    }, 500);
                 } else {
                     const errorData = await response.json();
                     alert("Server Error: " + (errorData.error || "Unknown error"));
